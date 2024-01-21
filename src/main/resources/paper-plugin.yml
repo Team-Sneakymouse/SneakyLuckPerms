@@ -1,0 +1,13 @@
+name: SneakyLuckPerms
+version: 1.0
+main: net.sneakymouse.sneakyluckperms.SneakyLuckPerms
+description: An expansion to LuckPerms that allows unsetting permission nodes via regex patterns.
+authors: [Team Sneakymouse]
+website: https://github.com/Team-Sneakymouse/SneakyLuckPerms-Paper
+api-version: "1.19"
+
+dependencies:
+  server:
+    LuckPerms:
+      load: BEFORE
+      required: true
