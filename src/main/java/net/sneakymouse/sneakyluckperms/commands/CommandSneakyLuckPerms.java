@@ -13,9 +13,9 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,8 +64,8 @@ public class CommandSneakyLuckPerms extends Command {
                     case "user":
                         List<String> playerNames = new ArrayList<>();
 
-                        for (@NotNull OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                            if (player.getName().toLowerCase().startsWith(args[1].toLowerCase()) && !player.getName().equals("CMI-Fake-Operator")) playerNames.add(player.getName());
+                        for (Player pl : Bukkit.getOnlinePlayers()) {
+                            if (pl.getName() != null && pl.getName().toLowerCase().startsWith(args[1].toLowerCase()) && !pl.getName().equals("CMI-Fake-Operator")) playerNames.add(pl.getName());
                         }
 
                         return playerNames;
@@ -86,15 +86,18 @@ public class CommandSneakyLuckPerms extends Command {
 
     private boolean caseUser(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length > 0) {
-            @Nullable User user = null;
+            Player player = Bukkit.getPlayerExact(args[0]);
 
-            String name = args[0];
-            for (@NotNull OfflinePlayer opl : Bukkit.getOfflinePlayers()) {
-                if (opl.getName().equalsIgnoreCase(name)); user = luckPerms.getUserManager().getUser(opl.getUniqueId());
+            if (player == null) {
+                sender.sendMessage(ChatUtility.convertToComponent("&4Unknown player: " + args[0]));
+                return false;
             }
 
+            @Nullable User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+
             if (user == null) {
-                sender.sendMessage(ChatUtility.convertToComponent("&4Unknown player: " + name));
+                sender.sendMessage(ChatUtility.convertToComponent("&4No player data for player: " + args[0]));
+                return false;
             }
 
             if (args.length > 1) {
